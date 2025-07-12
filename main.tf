@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "ap-south-1"
+  region = "us-east-1"
 }
 
 resource "aws_vpc" "devopsshack_vpc" {
@@ -14,7 +14,7 @@ resource "aws_subnet" "devopsshack_subnet" {
   count = 2
   vpc_id                  = aws_vpc.devopsshack_vpc.id
   cidr_block              = cidrsubnet(aws_vpc.devopsshack_vpc.cidr_block, 8, count.index)
-  availability_zone       = element(["ap-south-1a", "ap-south-1b"], count.index)
+  availability_zone       = element(["us-east-1a", "us-east-1b"], count.index)
   map_public_ip_on_launch = true
 
   tags = {
@@ -100,7 +100,7 @@ resource "aws_eks_cluster" "devopsshack" {
 resource "aws_eks_addon" "ebs_csi_driver" {
   cluster_name    = aws_eks_cluster.devopsshack.name
   addon_name      = "aws-ebs-csi-driver"
-  
+
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
 }
@@ -113,9 +113,9 @@ resource "aws_eks_node_group" "devopsshack" {
   subnet_ids      = aws_subnet.devopsshack_subnet[*].id
 
   scaling_config {
-    desired_size = 3
-    max_size     = 3
-    min_size     = 3
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
   }
 
   instance_types = ["t2.medium"]
